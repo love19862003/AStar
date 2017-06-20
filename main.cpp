@@ -2,6 +2,7 @@
 #include <random>
 #include <array>
 #include <iostream>
+#include <string>
 #include "AStar.h"
 #include "MapTemplate.h"
 using namespace  AStarSpace;
@@ -25,10 +26,10 @@ uint32 grandom(uint32 min, uint32 max){
   return dis(rd);
 }
 
-void testAstar(){
+void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 testCount){
     Map points;
-    const uint32 MaxSizeX = 20;
-    const uint32 MaxSizeY = 26;
+    //uint32 MaxSizeX = 20;
+    //uint32 MaxSizeY = 26;
 
     //增加路点邻居数据
     auto addlink = [MaxSizeX, MaxSizeY](Point& p, const keys& l){
@@ -57,11 +58,11 @@ void testAstar(){
     typedef AStart<keys, uint32> AStarType;
     //估值函数
     auto h = [&points](const Map::key_type& s, const Map::key_type& e){
-      auto pl = points.getData(s);
-      auto pr = points.getData(e);
-      float x = pl.pos[0] - pr.pos[0];
-      float y = pl.pos[1] - pr.pos[1];
-      float z = pl.pos[2] - pr.pos[2];
+      auto ps = points.getData(s);
+      auto pe = points.getData(e);
+      float x = ps.pos[0] - pe.pos[0];
+      float y = ps.pos[1] - pe.pos[1];
+      float z = ps.pos[2] - pe.pos[2];
       return static_cast<uint32>(std::sqrtl(x*x + y*y + z*z) * 100);
     };
 
@@ -99,7 +100,7 @@ void testAstar(){
 
 
     //测试寻路
-    for (uint32 i = 0;i < 5; ++i){
+    for (uint32 i = 0;i < testCount; ++i){
       keys s = std::make_pair(grandom(0, MaxSizeX - 1) , grandom(0, MaxSizeY - 1) ) ;
       keys e = std::make_pair(grandom(0, MaxSizeX - 1) , grandom(0, MaxSizeY - 1) ) ;
       std::cout << "[" << s.first << " " << s.second << "] " << "[" << e.first <<  " "  << e.second << "]" << std::endl;
@@ -108,7 +109,20 @@ void testAstar(){
 
 
   }
+
+bool str2U(const char* txt, uint32& v){
+  try{
+    v = static_cast<uint32>(std::stoul(txt));
+    return true;
+  } catch(...){
+    return false;
+  }
+}
 int main(int argc, char* argv[]){
-  testAstar();  
+  uint32 X = 20, Y=26, count = 30;
+  if (argc > 1){ str2U(argv[1], X);}
+  if (argc > 2){ str2U(argv[2], Y);}
+  if (argc > 3){ str2U(argv[3], count);}
+  testAstar(X, Y, count);  
   return 0;
 }

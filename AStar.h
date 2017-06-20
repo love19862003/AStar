@@ -16,9 +16,9 @@
 
 namespace AStarSpace{
   
-// A* 算法测试
   template<typename T, typename W = unsigned int>
   class AStart{
+
   private:
     typedef T DataType;
     typedef W WeightType;
@@ -26,18 +26,18 @@ namespace AStarSpace{
     struct Data{
       explicit Data(const DataType& d): _data(d), _g(0), _h(0), _parent(nullptr){}
       DataType _data;
-      WeightType _g;          //消耗
-      WeightType _h;          //估值
+      WeightType _g;          
+      WeightType _h;          
       std::shared_ptr<Data> _parent;
     };
 
     typedef std::shared_ptr<Data> Pointer;
     typedef std::list<Pointer> NodeList;
     typedef std::list<DataType> PathList;
-    typedef std::function<WeightType(const DataType&, const DataType&)> HFunctor;  //估值函数
-    typedef std::function<WeightType(const DataType&, const DataType&)> GFunctor;  //消耗函数
-    typedef std::function<bool(const DataType&, const DataType&)>   EFunctor;  //检测相同节点
-    typedef std::function<std::list<DataType>(const DataType&)>     LFunctor;  //节点相连路径列表(可以在这里排除路障)
+    typedef std::function<WeightType(const DataType&, const DataType&)> HFunctor;  
+    typedef std::function<WeightType(const DataType&, const DataType&)> GFunctor;  
+    typedef std::function<bool(const DataType&, const DataType&)>   EFunctor;  
+    typedef std::function<std::list<DataType>(const DataType&)>     LFunctor; 
 
   public:
     explicit AStart(const HFunctor& h, const GFunctor& g, const EFunctor& e, const LFunctor& l):_h_fun(h), _g_fun(g), _e_fun(e), _l_fun(l){
@@ -62,12 +62,12 @@ namespace AStarSpace{
       _path.clear();
       if(!start || !end){ return false; }
       if(start == end){ _path.push_back(start->_data); return true; }
-      //计算F
+  
       start->_h = _h_fun(start->_data, end->_data);
       _open.push_back(start);
       while(!_open.empty()){
         Pointer front = _open.front();
-        //找到终点
+       
         if(_e_fun(front->_data, end->_data)){
           while(front){
             _path.push_front(front->_data);
