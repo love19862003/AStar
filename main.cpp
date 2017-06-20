@@ -61,13 +61,12 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 obstacleCount,  uint32 
       }
     }
     //生成障碍点
-
     for (uint32 i = 0 ; i < obstacleCount;++i){
       keys s = std::make_pair(grandom(0, MaxSizeX - 1) , grandom(0, MaxSizeY - 1) );
       auto& p = points.getData(s);
       p.tag = obstacle;
 
-      // remove node
+      //删除障碍点的邻居
       for (auto& l : p.link){
         auto n = points.getData(l);
         n.link.remove(s);
@@ -99,6 +98,8 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 obstacleCount,  uint32 
     auto links = [&points](const Map::key_type& l){
       auto p = points.getData(l);
       auto r = p.link;
+
+      //这里其实可以不要.上面生成的图中已经去掉了. 但实际项目中可能会要是用 比如排除一些点等等,
       r.remove_if([&points](const keys& k){return points.getData(k).tag == obstacle;});
       return std::move(r);
     };
