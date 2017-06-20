@@ -160,11 +160,12 @@ bool str2U(const char* txt, uint32& v){
   }
 }
 int main(int argc, char* argv[]){
-  uint32 X = 20, Y=26, count = 30, obstacleCount = 20;
-  if (argc > 1){ str2U(argv[1], X);}
-  if (argc > 2){ str2U(argv[2], Y);}
-  if (argc > 3){ str2U(argv[3], count);}
+  uint32 XMax = 20, YMax=26, testCount = 30, obstacleCount = 20;
+  if (argc > 1){ str2U(argv[1], XMax);}
+  if (argc > 2){ str2U(argv[2], YMax);}
+  if (argc > 3){ str2U(argv[3], testCount);}
   if (argc > 4){ str2U(argv[4], obstacleCount);}
-  testAstar(X, Y, obstacleCount, count);  
+
+  testAstar(XMax, YMax, obstacleCount, testCount);  
   return 0;
 }
