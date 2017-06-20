@@ -10,9 +10,14 @@ using namespace  AStarSpace;
 typedef unsigned int uint32;
 typedef std::pair<uint32, uint32> keys;
 
+enum Tag{
+  normal = 0,
+  obstacle = 1,
+};
 struct Point{
   std::array<float, 3> pos;   //位置
   std::list<keys> link;       //可以到达的点
+  Tag tag;
 };
 
 
@@ -26,7 +31,7 @@ uint32 grandom(uint32 min, uint32 max){
   return dis(rd);
 }
 
-void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 testCount){
+void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 obstacleCount,  uint32 testCount){
     Map points;
     //uint32 MaxSizeX = 20;
     //uint32 MaxSizeY = 26;
@@ -43,16 +48,32 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 testCount){
       for(uint32 j = 0; j < MaxSizeY; ++j){
         Point p;
         p.pos = {static_cast<float>(i), static_cast<float>(j), 1.f};
-        addlink(p, std::make_pair(i, j-1));
-        addlink(p, std::make_pair(i, j+1));
-        addlink(p, std::make_pair(i+1,j));
-        addlink(p, std::make_pair(i+1,j+1));
-        addlink(p, std::make_pair(i+1,j-1));
-        addlink(p, std::make_pair(i-1, j+1));
-        addlink(p, std::make_pair(i-1, j));
-        addlink(p, std::make_pair(i-1, j-1));
+        p.tag = normal;
+        addlink(p, std::make_pair(i, j - 1));
+        addlink(p, std::make_pair(i, j + 1));
+        addlink(p, std::make_pair(i + 1, j));
+        addlink(p, std::make_pair(i + 1, j + 1));
+        addlink(p, std::make_pair(i + 1, j - 1));
+        addlink(p, std::make_pair(i - 1, j + 1));
+        addlink(p, std::make_pair(i - 1, j));
+        addlink(p, std::make_pair(i - 1, j - 1));
         points.addData(std::make_pair(i, j), p);
       }
+    }
+    //生成障碍点
+
+    for (uint32 i = 0 ; i < obstacleCount;++i){
+      keys s = std::make_pair(grandom(0, MaxSizeX - 1) , grandom(0, MaxSizeY - 1) );
+      auto& p = points.getData(s);
+      p.tag = obstacle;
+
+      // remove node
+      for (auto& l : p.link){
+        auto n = points.getData(l);
+        n.link.remove(s);
+      }
+
+      p.link.clear();
     }
 
     typedef AStart<keys, uint32> AStarType;
@@ -77,14 +98,16 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 testCount){
     //获取路点相通的路点列表
     auto links = [&points](const Map::key_type& l){
       auto p = points.getData(l);
-      return p.link;
+      auto r = p.link;
+      r.remove_if([&points](const keys& k){return points.getData(k).tag == obstacle;});
+      return std::move(r);
     };
 
 
     AStarType object(h, g, e, links);
 
     //输出寻路结果
-    auto getPath = [&object, MaxSizeX, MaxSizeY](const keys& s, const keys& e){
+    auto getPath = [&object, MaxSizeX, MaxSizeY,&points](const keys& s, const keys& e){
       auto path = object.findPath(s, e);
       std::set<keys> PathSet;
       for(auto& d : path){
@@ -92,7 +115,17 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 testCount){
       }
       for(uint32 i = 0; i < MaxSizeX; ++i){
         std::string str = "";
-        for(uint32 j = 0; j < MaxSizeY; ++j){ str += (PathSet.count(std::make_pair(i, j)) > 0 ? "#" :" ");}
+        for(uint32 j = 0; j < MaxSizeY; ++j){ 
+          auto k = std::make_pair(i, j);
+          auto p = points.getData(k);
+          if (PathSet.count(k)){
+            str.append("#");
+          }else if (p.tag ==  obstacle){
+            str.append("o");
+          } else{
+            str.append(" ");
+          }
+        }
         std::cout << str.c_str()  << std::endl;
       }
       std::cout << "------------------------------------------------------------"<< std::endl;
@@ -100,9 +133,16 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 testCount){
 
 
     //测试寻路
-    for (uint32 i = 0;i < testCount; ++i){
+    for (uint32 i = 0;i < testCount;){
       keys s = std::make_pair(grandom(0, MaxSizeX - 1) , grandom(0, MaxSizeY - 1) ) ;
       keys e = std::make_pair(grandom(0, MaxSizeX - 1) , grandom(0, MaxSizeY - 1) ) ;
+
+      auto& ps = points.getData(s);
+      auto& pe = points.getData(e);
+      if (ps.tag == obstacle ||  pe.tag == obstacle){
+        continue;
+      }
+      ++i;
       std::cout << "[" << s.first << " " << s.second << "] " << "[" << e.first <<  " "  << e.second << "]" << std::endl;
       getPath(s, e) ;
     }
@@ -119,10 +159,11 @@ bool str2U(const char* txt, uint32& v){
   }
 }
 int main(int argc, char* argv[]){
-  uint32 X = 20, Y=26, count = 30;
+  uint32 X = 20, Y=26, count = 30, obstacleCount = 20;
   if (argc > 1){ str2U(argv[1], X);}
   if (argc > 2){ str2U(argv[2], Y);}
   if (argc > 3){ str2U(argv[3], count);}
-  testAstar(X, Y, count);  
+  if (argc > 4){ str2U(argv[4], obstacleCount);}
+  testAstar(X, Y, obstacleCount, count);  
   return 0;
 }
