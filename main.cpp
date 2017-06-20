@@ -3,6 +3,7 @@
 #include <array>
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "AStar.h"
 #include "MapTemplate.h"
 using namespace  AStarSpace;
@@ -83,7 +84,7 @@ void testAstar(uint32 MaxSizeX,  uint32 MaxSizeY, uint32 obstacleCount,  uint32 
       float x = ps.pos[0] - pe.pos[0];
       float y = ps.pos[1] - pe.pos[1];
       float z = ps.pos[2] - pe.pos[2];
-      return static_cast<uint32>(std::sqrtl(x*x + y*y + z*z) * 100);
+      return static_cast<uint32>(sqrtl(x*x + y*y + z*z) * 100);
     };
 
     //消耗函数 暂时和估值函数一样，可以自定义

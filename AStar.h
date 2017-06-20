@@ -11,6 +11,7 @@
 #ifndef __AStar_H__
 #define __AStar_H__
 #include <memory>
+#include <algorithm>
 #include <list>
 #include <functional>
 
