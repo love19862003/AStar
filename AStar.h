@@ -35,10 +35,10 @@ namespace AStarSpace{
     typedef std::shared_ptr<Data> Pointer;
     typedef std::list<Pointer> NodeList;
     typedef std::list<DataType> PathList;
-    typedef std::function<WeightType(const DataType&, const DataType&)> HFunctor;  
-    typedef std::function<WeightType(const DataType&, const DataType&)> GFunctor;  
-    typedef std::function<bool(const DataType&, const DataType&)>   EFunctor;  
-    typedef std::function<std::list<DataType>(const DataType&)>     LFunctor; 
+    typedef std::function<WeightType(const DataType&, const DataType&)> HFunctor; //估值函数
+    typedef std::function<WeightType(const DataType&, const DataType&)> GFunctor; //消耗函数 
+    typedef std::function<bool(const DataType&, const DataType&)>   EFunctor;     //判断节点是否相同
+    typedef std::function<std::list<DataType>(const DataType&)>     LFunctor;     //返回节点相连节点
 
   public:
     explicit AStart(const HFunctor& h, const GFunctor& g, const EFunctor& e, const LFunctor& l):_h_fun(h), _g_fun(g), _e_fun(e), _l_fun(l){
