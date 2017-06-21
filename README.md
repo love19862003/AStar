@@ -1,2 +1,2 @@
 # AStar
-一个简单的A*算法。支持自定义数据类型。
+a* arithmetic with c++11 template. only header.
