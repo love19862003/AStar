@@ -35,13 +35,16 @@ namespace AStarSpace{
     typedef std::shared_ptr<Data> Pointer;
     typedef std::list<Pointer> NodeList;
     typedef std::list<DataType> PathList;
-    typedef std::function<WeightType(const DataType&, const DataType&)> HFunctor; //ä¼°å€¼å‡½æ•°
-    typedef std::function<WeightType(const DataType&, const DataType&)> GFunctor; //æ¶ˆè€—å‡½æ•° 
-    typedef std::function<bool(const DataType&, const DataType&)>   EFunctor;     //åˆ¤æ–­èŠ‚ç‚¹æ˜¯å¦ç›¸åŒ
-    typedef std::function<std::list<DataType>(const DataType&)>     LFunctor;     //è¿”å›èŠ‚ç‚¹ç›¸è¿èŠ‚ç‚¹
-
+    typedef std::function<WeightType(const DataType&, const DataType&)> HFunctor; //¹ÀÖµº¯Êı
+    typedef std::function<WeightType(const DataType&, const DataType&)> GFunctor; //ÏûºÄº¯Êı 
+    typedef std::function<bool(const DataType&, const DataType&)>   EFunctor;     //ÅĞ¶Ï½ÚµãÊÇ·ñÏàÍ¬
+    typedef std::function<std::list<DataType>(const DataType&)>     LFunctor;     //·µ»Ø½ÚµãÏàÁ¬½Úµã
   public:
-    explicit AStart(const HFunctor& h, const GFunctor& g, const EFunctor& e, const LFunctor& l):_h_fun(h), _g_fun(g), _e_fun(e), _l_fun(l){
+    explicit AStart(const HFunctor& h, const GFunctor& g, const EFunctor& e, const LFunctor& l)
+      :_h_fun(h)
+      , _g_fun(g)
+      , _e_fun(e)
+      , _l_fun(l){
 
     }
     ~AStart(){
